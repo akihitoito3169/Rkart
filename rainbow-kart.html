@@ -27,12 +27,22 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 #start,#rot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,12,20,.88);text-align:center;gap:14px;padding:20px}
 #rot{display:none;z-index:9}
 #start button,#fin button{font-size:22px;font-weight:800;padding:14px 38px;border-radius:14px;border:0;background:linear-gradient(90deg,#f33,#fa0,#4c4,#38f,#a4f);color:#fff;text-shadow:0 1px 3px #0008}
-#cs{display:flex;gap:10px}#cs .c{font-size:17px;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;font-weight:700;text-shadow:none}#cs .c.on{background:#fa0;color:#000;border-color:#fff}
+#cs{display:flex;gap:10px}#cs .c{font-size:15px;padding:7px 12px;border-radius:12px;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;font-weight:700;text-shadow:none}#cs .c.on{background:#fa0;color:#000;border-color:#fff}
 .mb{position:fixed;left:10px;width:86px;top:8px;z-index:4;display:none;padding:10px 0;font-size:14px;font-weight:800;border-radius:10px;border:2px solid #fff;color:#fff;text-align:center}#endb{background:rgba(200,40,40,.9)}#rst{top:60px;background:rgba(40,110,220,.9)}#lnb{top:112px;background:rgba(30,140,90,.9)}
 #fin{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,12,20,.9);text-align:center;gap:14px;padding:20px;z-index:6}
 #sig{position:fixed;left:50%;top:24%;transform:translateX(-50%);display:none;gap:10px;padding:12px 16px;background:#111;border:3px solid #444;border-radius:14px;z-index:5}#sig i{display:block;width:44px;height:44px;border-radius:50%;background:#2a0000;box-shadow:inset 0 0 6px #000}#sig i.on{background:#ff2a1a;box-shadow:0 0 18px #ff2a1a,inset 0 0 8px #ffb0a0}
 #flag{position:fixed;inset:0;display:none;z-index:7;background:rgba(0,0,0,.4);pointer-events:none}#flag canvas{width:100%;height:100%;display:block}#ftx{position:absolute;left:0;right:0;bottom:12%;text-align:center;font-size:44px;font-weight:900;text-shadow:0 2px 8px #000;color:#fff}
 #demoT{position:fixed;left:50%;top:calc(24% + 8px);transform:translateX(-50%);display:none;padding:6px 14px;border-radius:10px;background:rgba(30,102,208,.9);color:#fff;font-weight:800;font-size:16px;z-index:3;pointer-events:none}
+#start{justify-content:flex-start;overflow-y:auto;padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px));gap:0}
+#sw{margin:auto;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;gap:8px}
+#start .ttl{font-size:21px;font-weight:800}
+.bx{width:100%;border:2px solid rgba(255,255,255,.35);border-radius:12px;padding:6px 8px 8px;background:rgba(255,255,255,.05);text-align:left}
+.bx .bt{font-size:12px;font-weight:800;opacity:.8;margin:0 0 5px 2px;letter-spacing:.08em}
+.bg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.bg.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+#start .sb{font-size:12.5px;font-weight:700;padding:8px 6px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none;line-height:1.25;min-width:0;width:100%;white-space:normal}
+#start .sb.w2{grid-column:1/-1}
+#start #demoB{background:#1e66d0}
+#start #go{background:#ffd21f;color:#000;text-shadow:none;font-size:22px;padding:12px 0;width:min(100%,320px);border-radius:14px}
 #start p{margin:0;font-size:13px;opacity:.85;line-height:1.6;max-width:520px}
 @media (orientation:landscape) and (max-height:520px){#rot{display:flex}}
 </style></head><body>
@@ -41,9 +51,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 <div id="gauge" class="hud" style="left:50%;transform:translateX(-50%);top:calc(8px + env(safe-area-inset-top,0px));font-size:15px;text-align:center"></div><canvas id="mm" width="450" height="255" style="position:fixed;pointer-events:none;left:104px;top:6px;width:calc(100% - 114px);height:calc(24% - 12px);object-fit:contain;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.4)"></canvas><div id="msg"></div>
 <button id="mode">操舵: ボタン</button><button id="cal">中立リセット</button>
 <button id="ret">コースに戻る</button><button id="endb" class="mb">END</button><button id="rst" class="mb">RESTART</button><div id="demoT">DEMO 走行中</div><div id="sig"><i></i><i></i><i></i><i></i><i></i></div><div id="flag"><canvas id="fcv"></canvas><div id="ftx">FINISH!</div></div><div id="fin"><div id="finT"></div><button id="finR">もう一度</button><button id="finM">コース選択へ</button></div>
-<div id="start"><div style="font-size:30px;font-weight:800">🏁 レインボー レンタルカート</div><div id="cs"><button class="c on" data-c="east">東コース<br><small>710m</small></button><button class="c" data-c="full">フルコース<br><small>900m</small></button></div><div style="font-size:13px;opacity:.85">コースを選んでスタート（3周でゴール）／ 大人用 N35X（実車 約68km/h・体感0.86倍）</div>
-<p>縦画面で遊びます。右下＝ブレーキ／アクセル、左下＝ハンドル左右。最上段のコース図で現在位置（赤い丸）がわかります（キーボードは矢印キー）。<br>コースは公式の東コースマップ（レインボー部分）をもとにトレースしています。</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button id="bgmT" style="font-size:14px;padding:8px 12px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none">BGM: ON</button><button id="tmT" style="font-size:14px;padding:8px 12px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none">時間帯: 夜間</button><button id="lnT" style="font-size:14px;padding:8px 12px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none">ライン表示: ON</button></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button id="rcT" style="font-size:14px;padding:8px 12px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none">モード: タイムトライアル（3周）</button><button id="dfT" style="font-size:14px;padding:8px 12px;border-radius:10px;border:2px solid #fff;background:#333;color:#fff;text-shadow:none">CPUの強さ: ふつう</button></div><button id="go">スタート</button><button id="demoB" style="background:#1e66d0">🎬 デモ走行（アウトインアウト）</button></div>
+<div id="start"><div id="sw"><div class="ttl">🏁 レインボー レンタルカート</div><div id="cs"><button class="c on" data-c="east">東コース<br><small>710m</small></button><button class="c" data-c="full">フルコース<br><small>900m</small></button></div>
+<div style="font-size:11.5px;opacity:.85;line-height:1.4">大人用 N35X（実車 約68km/h・体感0.86倍）</div>
+<div class="bx"><div class="bt">環境設定</div><div class="bg"><button id="bgmT" class="sb">BGM: ON</button><button id="tmT" class="sb">時間帯: 夜間</button><button id="lnT" class="sb">ライン表示: ON</button></div></div>
+<div class="bx"><div class="bt">ゲーム設定</div><div class="bg g2"><button id="rcT" class="sb w2">モード: タイムトライアル（3周）</button><button id="dfT" class="sb">CPUの強さ: ふつう</button><button id="demoB" class="sb">🎬 デモ走行</button></div></div>
+<button id="go">スタート</button>
+<div style="font-size:11px;opacity:.7;line-height:1.5">右下＝ブレーキ／アクセル　左下＝ハンドル　最上段＝コース図（赤い丸が現在位置）<br>コースは公式の東コースマップをもとに作成</div></div></div>
 <div id="rot"><div style="font-size:48px">📱↻</div><div style="font-size:20px;font-weight:700">スマホを縦向きにしてください</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
